@@ -1242,19 +1242,48 @@ function createFallbackEmailUrl(payload) {
   return `mailto:${enquiryEmailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-function setFormStatus(status, message, state, fallbackUrl = "") {
+function setFormStatus(status, options = {}) {
   if (!status) return;
 
-  status.classList.remove("is-success", "is-error");
+  const {
+    eyebrow = "",
+    title = "",
+    message = "",
+    state = "",
+    fallbackUrl = "",
+  } = options;
+
+  status.classList.remove("is-sending", "is-success", "is-error");
   if (state) status.classList.add(`is-${state}`);
-  status.replaceChildren(document.createTextNode(message));
+  status.replaceChildren();
+
+  if (eyebrow) {
+    const eyebrowElement = document.createElement("span");
+    eyebrowElement.className = "form-status__eyebrow";
+    eyebrowElement.textContent = eyebrow;
+    status.append(eyebrowElement);
+  }
+
+  if (title) {
+    const titleElement = document.createElement("strong");
+    titleElement.className = "form-status__title";
+    titleElement.textContent = title;
+    status.append(titleElement);
+  }
+
+  if (message) {
+    const messageElement = document.createElement("span");
+    messageElement.className = "form-status__copy";
+    messageElement.textContent = message;
+    status.append(messageElement);
+  }
 
   if (fallbackUrl) {
-    const separator = document.createTextNode(" ");
     const emailLink = document.createElement("a");
+    emailLink.className = "form-status__link";
     emailLink.href = fallbackUrl;
-    emailLink.textContent = "Send it by email instead.";
-    status.append(separator, emailLink);
+    emailLink.textContent = "Email Romilia instead";
+    status.append(emailLink);
   }
 
   status.focus();
@@ -1282,7 +1311,10 @@ document.querySelectorAll("[data-enquiry-form]").forEach((form) => {
     const timeoutId = window.setTimeout(() => controller.abort(), 15000);
 
     setSubmittingState(form, true);
-    setFormStatus(status, "Sending your enquiry…", "");
+    setFormStatus(status, {
+      message: "Sending your enquiry…",
+      state: "sending",
+    });
 
     try {
       if (!navigator.onLine) {
@@ -1316,11 +1348,12 @@ document.querySelectorAll("[data-enquiry-form]").forEach((form) => {
       }
 
       form.reset();
-      setFormStatus(
-        status,
-        "Thank you. Your enquiry was sent to Romilia.",
-        "success",
-      );
+      setFormStatus(status, {
+        eyebrow: "Enquiry received",
+        title: "It’s with Romilia.",
+        message: `Romilia will read the details and reply to ${payload.email}.`,
+        state: "success",
+      });
     } catch (error) {
       const serviceUnavailable =
         error?.serviceUnavailable === true ||
@@ -1332,7 +1365,13 @@ document.querySelectorAll("[data-enquiry-form]").forEach((form) => {
         ? "The form is not available now. Your details were not sent."
         : error?.message || "Your enquiry could not be sent.";
 
-      setFormStatus(status, message, "error", fallbackUrl);
+      setFormStatus(status, {
+        eyebrow: "Not sent",
+        title: "Let’s try another way.",
+        message,
+        state: "error",
+        fallbackUrl,
+      });
 
       if (serviceUnavailable) {
         form.dispatchEvent(

@@ -1045,8 +1045,6 @@ button:focus-visible {
 }
 
 .services-hero__media {
-  min-height: 32rem;
-  display: grid;
   grid-template-rows: 1fr 0.82fr;
   overflow: hidden;
   border-radius: 3px;
@@ -1373,8 +1371,7 @@ button:focus-visible {
   margin-top: 2rem;
 }
 
-.form-note,
-.form-status {
+.form-note {
   margin: 0;
   color: var(--romilia-muted);
   font-family: Arial, Helvetica, sans-serif;
@@ -1382,25 +1379,84 @@ button:focus-visible {
 }
 
 .form-status {
-  margin-top: 1rem;
-  padding: 0.9rem 1rem;
-  border-left: 3px solid var(--romilia-accent);
+  position: relative;
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid var(--romilia-line);
   color: var(--romilia-ink);
-  background: color-mix(in srgb, var(--romilia-accent) 8%, transparent);
+  background: transparent;
+  overflow: hidden;
+}
+
+.form-status::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0.3rem;
+  background: var(--romilia-accent);
+  content: "";
+}
+
+.form-status__eyebrow {
+  color: currentColor;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.form-status__title {
+  max-width: 11ch;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+}
+
+.form-status__copy {
+  max-width: 38rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.form-status.is-sending {
+  display: block;
+  margin-top: 1rem;
+  padding: 0;
+  border: 0;
+  color: var(--romilia-muted);
+  background: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.78rem;
+}
+
+.form-status.is-sending::before {
+  display: none;
 }
 
 .form-status.is-success {
-  border-left-color: #2d6a4f;
-  background: color-mix(in srgb, #2d6a4f 9%, transparent);
+  border-color: var(--romilia-ink);
+  color: var(--romilia-paper);
+  background: var(--romilia-ink);
 }
 
 .form-status.is-error {
-  border-left-color: #a63d40;
-  background: color-mix(in srgb, #a63d40 8%, transparent);
+  border-color: var(--romilia-accent);
+  background: color-mix(in srgb, var(--romilia-accent) 7%, var(--romilia-paper));
 }
 
-.form-status a {
+.form-status__link {
+  width: fit-content;
+  margin-top: 0.35rem;
   color: inherit;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 0.2em;

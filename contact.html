@@ -21,6 +21,7 @@
       crossorigin="anonymous"
     />
     <link href="styles.css" rel="stylesheet" />
+    <link href="form-availability.css" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="script.js" defer></script>
     <script src="form-availability.js" defer></script>
@@ -131,6 +132,7 @@
 
         <div>
           <p
+            class="form-availability__checking"
             role="status"
             data-form-checking
             hidden
@@ -258,15 +260,16 @@
                 Your details are sent securely to Romilia.
               </p>
             </div>
-            <p
+            <aside
               class="form-status"
               role="status"
               tabindex="-1"
               data-form-status
-            ></p>
+            ></aside>
           </form>
 
           <aside
+            class="form-availability__fallback"
             aria-labelledby="contact-form-fallback-title"
             data-form-fallback
             hidden

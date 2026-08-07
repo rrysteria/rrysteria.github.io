@@ -21,6 +21,7 @@
       crossorigin="anonymous"
     />
     <link href="styles.css" rel="stylesheet" />
+    <link href="form-availability.css" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="script.js" defer></script>
     <script src="form-availability.js" defer></script>
@@ -115,27 +116,12 @@
           aria-label="Selected Romilia photographs"
         >
           <img
-            src="gallery/D5581B88-4682-457E-AA70-C635F7040CB1.jpeg"
-            alt="A studio portrait from the Romilia gallery"
-            draggable="false"
-          />
-          <img
             src="gallery/210730010015.jpg"
             alt="An outdoor group portrait from the Romilia gallery"
             draggable="false"
           />
         </div>
       </section>
-
-      <div class="service-strip" aria-hidden="true">
-        <div class="service-strip__track">
-          <span>Studio portfolio</span>
-          <span>On-location portfolio</span>
-          <span>Headshots</span>
-          <span>Creative work</span>
-          <span>Editorial work</span>
-        </div>
-      </div>
 
       <section
         class="service-list container-fluid"
@@ -286,6 +272,7 @@
 
         <div>
           <p
+            class="form-availability__checking"
             role="status"
             data-form-checking
             hidden
@@ -402,15 +389,16 @@
                 Your details are sent securely to Romilia.
               </p>
             </div>
-            <p
+            <aside
               class="form-status"
               role="status"
               tabindex="-1"
               data-form-status
-            ></p>
+            ></aside>
           </form>
 
           <aside
+            class="form-availability__fallback"
             aria-labelledby="services-form-fallback-title"
             data-form-fallback
             hidden

@@ -1,0 +1,32 @@
+.form-availability__checking,
+.form-availability__fallback {
+  max-width: 42rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  color: var(--romilia-ink);
+  background: color-mix(in srgb, var(--romilia-accent) 7%, transparent);
+}
+
+.form-availability__checking {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.9rem;
+}
+
+.form-availability__fallback h2 {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3.25rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.form-availability__fallback p:not(.section-label) {
+  margin: 1rem 0 1.5rem;
+  color: var(--romilia-muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.form-availability__fallback .action-button {
+  width: fit-content;
+}
