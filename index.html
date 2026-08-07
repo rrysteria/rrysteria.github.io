@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en-GB" data-bs-core="elegant">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Romilia is a digital studio. This page is a foundation for the future Romilia website.">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Romilia is a digital studio. This page is a foundation for the future Romilia website."
+    />
     <title>ROMILIA</title>
 
     <link
@@ -11,140 +14,214 @@
       rel="stylesheet"
       integrity="sha256-RjeFzczeuZHCyS+Gvz+kleETzBF/o84ZRHukze/yv6o="
       crossorigin="anonymous"
-    >
+    />
     <link
       href="https://cdn.jsdelivr.net/npm/halfmoon@2.0.2/css/cores/halfmoon.elegant.css"
       rel="stylesheet"
       crossorigin="anonymous"
-    >
-    <link href="styles.css" rel="stylesheet">
+    />
+    <link href="styles.css" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="script.js" defer></script>
   </head>
 
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <header class="site-header" data-site-header>
-      <div class="site-header__inner container-fluid">
-        <a class="brand" href="#home" aria-label="Romilia home">ROMILIA</a>
+      <nav class="navbar navbar-expand-md" aria-label="Primary navigation">
+        <div class="site-header__inner container-fluid">
+          <a class="brand navbar-brand" href="#home" aria-label="Romilia home"
+            >ROMILIA</a
+          >
 
-        <button
-          class="menu-button btn btn-outline-secondary"
-          type="button"
-          aria-expanded="false"
-          aria-controls="primary-navigation"
-          data-menu-button
-        >
-          Menu
-        </button>
+          <button
+            class="menu-button navbar-toggler"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open the menu"
+            data-menu-button
+          >
+            <span
+              class="menu-button__icon"
+              aria-hidden="true"
+              data-menu-open-icon
+            >
+              <i class="icon" data-lucide="menu"></i>
+            </span>
+            <span
+              class="menu-button__icon"
+              aria-hidden="true"
+              data-menu-close-icon
+              hidden
+            >
+              <i class="icon" data-lucide="x"></i>
+            </span>
+            <span data-menu-label>Menu</span>
+          </button>
 
-        <nav class="primary-navigation" id="primary-navigation" aria-label="Primary navigation" data-navigation>
-          <a class="nav-link is-active" href="#home" aria-current="page">Home</a>
-        </nav>
-      </div>
+          <div
+            class="primary-navigation collapse navbar-collapse"
+            id="primary-navigation"
+            data-navigation
+          >
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link active" href="#home" aria-current="page"
+                  >Home</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
 
     <main id="main-content">
-      <section class="work-section container-fluid" id="home" aria-labelledby="work-title">
-
-        <div class="project-grid">
-          <article class="project-card">
-            <a href="#project-one" aria-label="Open the editorial identity project placeholder">
-              <div class="project-placeholder placeholder-one" role="img" aria-label="Image placeholder for an editorial identity project">
-                <img src="./gallery/029589010004.jpg" alt="029589010004">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card">
-            <a href="#project-two" aria-label="Open the campaign system project placeholder">
-              <div class="project-placeholder placeholder-two" role="img" aria-label="Image placeholder for a campaign system project">
-                <img src="./gallery/029589010024.jpg" alt="029589010024">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card">
-            <a href="#project-three" aria-label="Open the digital journal project placeholder">
-              <div class="project-placeholder placeholder-three" role="img" aria-label="Image placeholder for a digital journal project">
-                <img src="./gallery/0A82CE6B-D839-4DD0-8982-B2ABBB6BFF1F.jpg" alt="0A82CE6B-D839-4DD0-8982-B2ABBB6BFF1F">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card">
-            <a href="#project-four" aria-label="Open the artist platform project placeholder">
-              <div class="project-placeholder placeholder-four" role="img" aria-label="Image placeholder for an artist platform project">
-                <img src="./gallery/1330369.jpg" alt="1330369">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card">
-            <a href="#project-five" aria-label="Open the publication launch project placeholder">
-              <div class="project-placeholder placeholder-five" role="img" aria-label="Image placeholder for a publication launch project">
-                <img src="./gallery/CA79374D-EDE1-400D-BFEF-63833209BDD9.jpg" alt="CA79374D-EDE1-400D-BFEF-63833209BDD9">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card">
-            <a href="#project-six" aria-label="Open the archive project placeholder">
-              <div class="project-placeholder placeholder-six" role="img" aria-label="Image placeholder for an archive project">
-                <img src="./gallery/D5581B88-4682-457E-AA70-C635F7040CB1.jpeg" alt="D5581B88-4682-457E-AA70-C635F7040CB1">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card">
-            <a href="#project-seven" aria-label="Open the studio profile project placeholder">
-              <div class="project-placeholder placeholder-seven" role="img" aria-label="Image placeholder for a studio profile project">
-                <img src="./gallery/IMG_0396.JPG" alt="IMG_0396.JPG">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card">
-            <a href="#project-eight" aria-label="Open the programme identity project placeholder">
-              <div class="project-placeholder placeholder-eight" role="img" aria-label="Image placeholder for a programme identity project">
-                <img src="./gallery/IMG_7730.JPG" alt="IMG_7730.JPG">
-              </div>
-              <div class="project-caption">
-                <h3>Title</h3>
-                <p>Details</p>
-              </div>
-            </a>
-          </article>
+      <section
+        class="work-section container-fluid"
+        id="home"
+        aria-labelledby="work-title"
+      >
+        <h1 id="work-title" class="visually-hidden">Gallery work</h1>
+        <div
+          class="project-grid"
+          id="project-grid"
+          aria-busy="true"
+          data-project-grid
+        >
+          <div class="grid-loading" data-grid-loading>
+            <span class="loading-spinner" aria-hidden="true"></span>
+            <p>Loading gallery...</p>
+          </div>
         </div>
       </section>
     </main>
+
+    <div
+      class="lightbox"
+      id="lightbox"
+      aria-hidden="true"
+      aria-modal="true"
+      aria-labelledby="lightbox-title"
+      aria-describedby="lightbox-help"
+      role="dialog"
+      inert
+      data-lightbox
+    >
+      <div
+        class="lightbox__backdrop"
+        aria-hidden="true"
+        data-lightbox-backdrop
+      ></div>
+      <div class="lightbox__content" data-lightbox-content>
+        <div
+          class="lightbox__toolbar"
+          role="toolbar"
+          aria-label="Photo controls"
+        >
+          <div
+            class="lightbox__zoom-controls"
+            role="group"
+            aria-label="Zoom controls"
+          >
+            <button
+              class="lightbox__tool"
+              type="button"
+              aria-label="Zoom out"
+              title="Zoom out"
+              data-zoom-out
+            >
+              <span class="icon-fallback" aria-hidden="true">−</span>
+              <i class="icon" data-lucide="zoom-out" aria-hidden="true"></i>
+            </button>
+            <output
+              class="lightbox__zoom-value"
+              aria-live="polite"
+              data-zoom-value
+              >100%</output
+            >
+            <button
+              class="lightbox__tool"
+              type="button"
+              aria-label="Zoom in"
+              title="Zoom in"
+              data-zoom-in
+            >
+              <span class="icon-fallback" aria-hidden="true">+</span>
+              <i class="icon" data-lucide="zoom-in" aria-hidden="true"></i>
+            </button>
+            <button
+              class="lightbox__tool lightbox__tool--text"
+              type="button"
+              title="Reset zoom"
+              data-zoom-reset
+            >
+              <i class="icon" data-lucide="rotate-ccw" aria-hidden="true"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+          <button
+            class="lightbox__tool lightbox__tool--text lightbox__close"
+            type="button"
+            title="Close viewer"
+            data-lightbox-close
+          >
+            <i class="icon" data-lucide="x" aria-hidden="true"></i>
+            <span>Close</span>
+          </button>
+        </div>
+
+        <button
+          class="lightbox__nav lightbox__nav--prev"
+          type="button"
+          aria-label="Show the previous photo"
+          aria-keyshortcuts="ArrowLeft"
+          title="Previous photo"
+          data-lightbox-prev
+        >
+          <span class="icon-fallback" aria-hidden="true">‹</span>
+          <i class="icon" data-lucide="chevron-left" aria-hidden="true"></i>
+        </button>
+
+        <figure class="lightbox__figure">
+          <div class="lightbox__stage" data-lightbox-stage></div>
+          <figcaption class="lightbox__caption">
+            <div class="lightbox__caption-heading">
+              <h2 id="lightbox-title" data-lightbox-title>Photo</h2>
+              <output
+                class="lightbox__count"
+                aria-live="polite"
+                data-lightbox-count
+              ></output>
+            </div>
+            <p class="lightbox__category" data-lightbox-category></p>
+            <p class="lightbox__help" id="lightbox-help">
+              <span class="lightbox__help--pointer"
+                >Click the photo or use the mouse wheel to zoom. Drag to move
+                the photo. Use the left and right arrow keys to browse.</span
+              >
+              <span class="lightbox__help--touch"
+                >Pinch to zoom. Drag to move the photo. Swipe to browse.</span
+              >
+            </p>
+          </figcaption>
+        </figure>
+
+        <button
+          class="lightbox__nav lightbox__nav--next"
+          type="button"
+          aria-label="Show the next photo"
+          aria-keyshortcuts="ArrowRight"
+          title="Next photo"
+          data-lightbox-next
+        >
+          <span class="icon-fallback" aria-hidden="true">›</span>
+          <i class="icon" data-lucide="chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
 
     <footer class="site-footer container-fluid" id="contact">
       <div>
@@ -152,11 +229,14 @@
         <p class="site-footer__statement">big email.</p>
       </div>
       <div class="site-footer__links">
-        <a href="#home">Back to top</a>
+        <a class="icon-link" href="#home">
+          <span>Back to top</span>
+          <i class="icon" data-lucide="arrow-up" aria-hidden="true"></i>
+        </a>
       </div>
-      <p class="site-footer__legal">© <span data-current-year>2026</span> Romilia. All rights reserved.</p>
+      <p class="site-footer__legal">
+        © <span data-current-year>2026</span> Romilia. All rights reserved.
+      </p>
     </footer>
-
-    <script src="script.js"></script>
   </body>
 </html>
