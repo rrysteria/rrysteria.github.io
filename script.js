@@ -167,8 +167,14 @@ renderIcons();
     ).trim();
     return {
       src: getFullImageSource(source),
-      title: suppliedTitle,
-      category: suppliedCategory
+      title:
+        suppliedTitle && suppliedTitle.toLowerCase() !== "title"
+          ? suppliedTitle
+          : defaultTitle,
+      category:
+        suppliedCategory && suppliedCategory.toLowerCase() !== "category"
+          ? suppliedCategory
+          : "Selected work",
     };
   }
 
@@ -1189,15 +1195,154 @@ document.querySelectorAll('input[type="date"]').forEach((dateInput) => {
   dateInput.min = minimumDate;
 });
 
-document.querySelectorAll("[data-preview-form]").forEach((form) => {
+const enquiryFunctionUrl =
+  "https://aghyubnxgqcfwjnfusuv.supabase.co/functions/v1/submit-enquiry";
+const supabasePublishableKey = "sb_publishable_NgHXckWRnnpghrppc-Qqjw_pP0fYBM0";
+const enquiryEmailAddress = "romiliawear@gmail.com";
+
+function selectedOptionText(field) {
+  if (!(field instanceof HTMLSelectElement) || !field.value) return "";
+  return field.selectedOptions[0]?.textContent?.trim() || "";
+}
+
+function createEnquiryPayload(form) {
+  const formData = new FormData(form);
+  const serviceField = form.elements.namedItem("service");
+  const budgetField = form.elements.namedItem("budget");
+
+  return {
+    name: String(formData.get("name") || "").trim(),
+    email: String(formData.get("email") || "").trim(),
+    phone: String(formData.get("phone") || "").trim(),
+    service: selectedOptionText(serviceField),
+    budget: selectedOptionText(budgetField),
+    preferredDate: String(formData.get("preferred-date") || "").trim(),
+    location: String(formData.get("location") || "").trim(),
+    message: String(formData.get("project-details") || "").trim(),
+    privacyConsent: formData.get("privacy-consent") === "on",
+    website: String(formData.get("website") || "").trim(),
+  };
+}
+
+function createFallbackEmailUrl(payload) {
+  const subject = `Romilia website enquiry — ${payload.name || "New project"}`;
+  const body = [
+    `Name: ${payload.name}`,
+    `Email: ${payload.email}`,
+    `Phone: ${payload.phone || "Not provided"}`,
+    `Service: ${payload.service}`,
+    `Budget: ${payload.budget || "Not provided"}`,
+    `Preferred date: ${payload.preferredDate || "Not provided"}`,
+    `Location: ${payload.location || "Not provided"}`,
+    "",
+    "Project details:",
+    payload.message,
+  ].join("\n");
+
+  return `mailto:${enquiryEmailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function setFormStatus(status, message, state, fallbackUrl = "") {
+  if (!status) return;
+
+  status.classList.remove("is-success", "is-error");
+  if (state) status.classList.add(`is-${state}`);
+  status.replaceChildren(document.createTextNode(message));
+
+  if (fallbackUrl) {
+    const separator = document.createTextNode(" ");
+    const emailLink = document.createElement("a");
+    emailLink.href = fallbackUrl;
+    emailLink.textContent = "Send it by email instead.";
+    status.append(separator, emailLink);
+  }
+
+  status.focus();
+}
+
+function setSubmittingState(form, isSubmitting) {
+  const button = form.querySelector('button[type="submit"]');
+  const label = button?.querySelector("span");
+
+  form.setAttribute("aria-busy", String(isSubmitting));
+  if (button) button.disabled = isSubmitting;
+  if (label) label.textContent = isSubmitting ? "Sending…" : "Send the enquiry";
+}
+
+document.querySelectorAll("[data-enquiry-form]").forEach((form) => {
   const status = form.querySelector("[data-form-status]");
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!status) return;
-    status.textContent =
-      "This form is not connected. Your details were not sent or saved.";
-    status.focus();
+    if (form.getAttribute("aria-busy") === "true") return;
+
+    const payload = createEnquiryPayload(form);
+    const fallbackUrl = createFallbackEmailUrl(payload);
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+
+    setSubmittingState(form, true);
+    setFormStatus(status, "Sending your enquiry…", "");
+
+    try {
+      if (!navigator.onLine) {
+        throw new Error("offline");
+      }
+
+      const response = await fetch(enquiryFunctionUrl, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          apikey: supabasePublishableKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      let result = null;
+      try {
+        result = await response.json();
+      } catch {
+        // The generic response below handles a non-JSON server response.
+      }
+
+      if (!response.ok || result?.ok !== true) {
+        const error = new Error(
+          result?.message || "The form could not send your enquiry.",
+        );
+        error.serviceUnavailable = response.status >= 500;
+        throw error;
+      }
+
+      form.reset();
+      setFormStatus(
+        status,
+        "Thank you. Your enquiry was sent to Romilia.",
+        "success",
+      );
+    } catch (error) {
+      const serviceUnavailable =
+        error?.serviceUnavailable === true ||
+        error?.name === "AbortError" ||
+        error?.message === "offline" ||
+        error instanceof TypeError;
+
+      const message = serviceUnavailable
+        ? "The form is not available now. Your details were not sent."
+        : error?.message || "Your enquiry could not be sent.";
+
+      setFormStatus(status, message, "error", fallbackUrl);
+
+      if (serviceUnavailable) {
+        form.dispatchEvent(
+          new CustomEvent("romilia:form-offline", { bubbles: true }),
+        );
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
+      setSubmittingState(form, false);
+    }
   });
 });
 

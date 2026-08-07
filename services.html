@@ -23,6 +23,7 @@
     <link href="styles.css" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="script.js" defer></script>
+    <script src="form-availability.js" defer></script>
   </head>
 
   <body class="page-services">
@@ -125,6 +126,16 @@
           />
         </div>
       </section>
+
+      <div class="service-strip" aria-hidden="true">
+        <div class="service-strip__track">
+          <span>Studio portfolio</span>
+          <span>On-location portfolio</span>
+          <span>Headshots</span>
+          <span>Creative work</span>
+          <span>Editorial work</span>
+        </div>
+      </div>
 
       <section
         class="service-list container-fluid"
@@ -262,87 +273,170 @@
       <section
         class="enquiry-section container-fluid"
         aria-labelledby="enquiry-title"
+        data-form-availability
       >
         <div class="enquiry-section__intro">
           <p class="section-label">Start an enquiry</p>
           <h2 id="enquiry-title">Tell Romilia what you need.</h2>
           <p>
-            Add the main facts about your project. This draft form does not send
-            or save your details yet.
+            Add the main facts about your project. Romilia will use your details
+            only to reply about this enquiry.
           </p>
         </div>
 
-        <form class="enquiry-form" data-preview-form>
-          <div class="form-grid">
-            <label class="form-field">
-              <span>Your name</span>
-              <input name="name" type="text" autocomplete="name" required />
-            </label>
-
-            <label class="form-field">
-              <span>Your email address</span>
-              <input name="email" type="email" autocomplete="email" required />
-            </label>
-
-            <label class="form-field">
-              <span>Service</span>
-              <select name="service" data-service-select required>
-                <option value="">Select a service</option>
-                <option value="studio-portfolio">
-                  Studio portfolio session
-                </option>
-                <option value="location-portfolio">
-                  On-location portfolio session
-                </option>
-                <option value="headshots">Headshot session</option>
-                <option value="creative-project">
-                  Creative or editorial project
-                </option>
-              </select>
-            </label>
-
-            <label class="form-field">
-              <span>Preferred date</span>
-              <input name="preferred-date" type="date" />
-            </label>
-
-            <label class="form-field form-field--wide">
-              <span>Budget</span>
-              <select name="budget">
-                <option value="">Select a budget range</option>
-                <option value="not-set">I do not have a set budget</option>
-                <option value="under-250">Less than £250</option>
-                <option value="250-500">£250 to £500</option>
-                <option value="500-1000">£500 to £1,000</option>
-                <option value="over-1000">More than £1,000</option>
-              </select>
-            </label>
-
-            <label class="form-field form-field--wide">
-              <span>Project details</span>
-              <textarea
-                name="project-details"
-                rows="6"
-                placeholder="Tell Romilia about your goal, the people involved, and the place."
-                required
-              ></textarea>
-            </label>
-          </div>
-
-          <div class="form-actions">
-            <button class="action-button" type="submit">
-              <span>Send the enquiry</span>
-              <i class="icon" data-lucide="send" aria-hidden="true"></i>
-            </button>
-            <p class="form-note">This form is not connected yet.</p>
-          </div>
+        <div>
           <p
-            class="form-status"
             role="status"
-            tabindex="-1"
-            data-form-status
-          ></p>
-        </form>
+            data-form-checking
+            hidden
+          >
+            Checking the enquiry form.
+          </p>
+
+          <form class="enquiry-form" data-enquiry-form hidden>
+            <div class="form-grid">
+              <label class="form-field">
+                <span>Your name</span>
+                <input
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  minlength="2"
+                  maxlength="100"
+                  required
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Your email address</span>
+                <input
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  maxlength="254"
+                  required
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Your phone number <small>(optional)</small></span>
+                <input
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  maxlength="40"
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Service</span>
+                <select name="service" data-service-select required>
+                  <option value="">Select a service</option>
+                  <option value="studio-portfolio">
+                    Studio portfolio session
+                  </option>
+                  <option value="location-portfolio">
+                    On-location portfolio session
+                  </option>
+                  <option value="headshots">Headshot session</option>
+                  <option value="creative-project">
+                    Creative or editorial project
+                  </option>
+                </select>
+              </label>
+
+              <label class="form-field">
+                <span>Preferred date</span>
+                <input name="preferred-date" type="date" />
+              </label>
+
+              <label class="form-field form-field--wide">
+                <span>Budget</span>
+                <select name="budget">
+                  <option value="">Select a budget range</option>
+                  <option value="not-set">I do not have a set budget</option>
+                  <option value="under-250">Less than £250</option>
+                  <option value="250-500">£250 to £500</option>
+                  <option value="500-1000">£500 to £1,000</option>
+                  <option value="over-1000">More than £1,000</option>
+                </select>
+              </label>
+
+              <label class="form-field form-field--wide">
+                <span>Project details</span>
+                <textarea
+                  name="project-details"
+                  rows="6"
+                  minlength="10"
+                  maxlength="5000"
+                  placeholder="Tell Romilia about your goal, the people involved, and the place."
+                  required
+                ></textarea>
+              </label>
+
+              <label class="form-consent form-field--wide">
+                <input name="privacy-consent" type="checkbox" required />
+                <span>
+                  I agree that Romilia can use these details to reply to my
+                  enquiry.
+                </span>
+              </label>
+
+              <label class="form-honeypot" aria-hidden="true">
+                <span>Leave this field empty</span>
+                <input
+                  name="website"
+                  type="text"
+                  tabindex="-1"
+                  autocomplete="off"
+                />
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button class="action-button" type="submit">
+                <span>Send the enquiry</span>
+                <i class="icon" data-lucide="send" aria-hidden="true"></i>
+              </button>
+              <p class="form-note">
+                Your details are sent securely to Romilia.
+              </p>
+            </div>
+            <p
+              class="form-status"
+              role="status"
+              tabindex="-1"
+              data-form-status
+            ></p>
+          </form>
+
+          <aside
+            aria-labelledby="services-form-fallback-title"
+            data-form-fallback
+            hidden
+          >
+            <p class="section-label">Form status</p>
+            <h2 id="services-form-fallback-title">Send an email instead.</h2>
+            <p>
+              Sorry. The enquiry form is not available now. You can send your
+              project details by email.
+            </p>
+            <a
+              class="action-button"
+              href="mailto:romiliawear@gmail.com?subject=Romilia%20website%20enquiry"
+            >
+              <span>Email Romilia</span>
+              <i class="icon" data-lucide="mail" aria-hidden="true"></i>
+            </a>
+          </aside>
+
+          <noscript>
+            <p>
+              The enquiry form needs JavaScript. Send an email to
+              <a href="mailto:romiliawear@gmail.com">romiliawear@gmail.com</a>.
+            </p>
+          </noscript>
+        </div>
       </section>
     </main>
 
