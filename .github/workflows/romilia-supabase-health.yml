@@ -1,0 +1,212 @@
+name: Check Supabase and deploy Romilia
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "17 4 * * *"
+      timezone: "Europe/London"
+  workflow_dispatch:
+    inputs:
+      force_offline:
+        description: "Publish the offline form state for a test."
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: romilia-pages
+  cancel-in-progress: false
+
+env:
+  SITE_SOURCE: "."
+  STATUS_FILE: "supabase-status.json"
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      database_online: ${{ steps.health.outputs.database_online }}
+      forced_offline: ${{ steps.health.outputs.forced_offline }}
+    steps:
+      - name: Get the site files
+        uses: actions/checkout@v6
+
+      - name: Check the Supabase database
+        id: health
+        shell: bash
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          FORM_IS_READY: ${{ vars.FORM_IS_READY }}
+          FORCE_OFFLINE: ${{ github.event_name == 'workflow_dispatch' && inputs.force_offline || false }}
+        run: |
+          set -euo pipefail
+
+          checked_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          valid_until="$(date -u -d '+36 hours' +'%Y-%m-%dT%H:%M:%SZ')"
+          temporary_directory="${RUNNER_TEMP:-.}"
+          mkdir -p "$temporary_directory"
+          response_file="$(mktemp "$temporary_directory/supabase-health.XXXXXX")"
+          trap 'rm -f "$response_file"' EXIT
+
+          database_online=false
+          forced_offline=false
+          form_released=false
+          form_available=false
+          checks_made=0
+          checks_passed=0
+          last_http_status=0
+
+          if [[ "${FORCE_OFFLINE:-false}" == "true" ]]; then
+            forced_offline=true
+          elif [[ -n "${SUPABASE_URL:-}" && -n "${SUPABASE_PUBLISHABLE_KEY:-}" ]]; then
+            for attempt in 1 2 3; do
+              checks_made=$((checks_made + 1))
+              : > "$response_file"
+
+              http_status="$(
+                curl \
+                  --silent \
+                  --show-error \
+                  --connect-timeout 10 \
+                  --max-time 25 \
+                  --output "$response_file" \
+                  --write-out '%{http_code}' \
+                  --header "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
+                  --header "Accept: application/json" \
+                  "${SUPABASE_URL%/}/rest/v1/site_health?select=site_name&site_name=eq.romilia-site&limit=1" \
+                  || true
+              )"
+
+              if [[ "$http_status" =~ ^[0-9]{3}$ ]]; then
+                last_http_status="$http_status"
+              else
+                last_http_status=0
+              fi
+
+              if [[ "$http_status" == "200" ]] && \
+                jq -e \
+                  'type == "array" and length == 1 and .[0].site_name == "romilia-site"' \
+                  "$response_file" >/dev/null 2>&1; then
+                checks_passed=$((checks_passed + 1))
+              fi
+
+              if [[ "$attempt" -lt 3 ]]; then
+                sleep 2
+              fi
+            done
+          fi
+
+          if [[ "$checks_passed" -ge 2 ]]; then
+            database_online=true
+          fi
+
+          if [[ "${FORM_IS_READY:-false}" == "true" ]]; then
+            form_released=true
+          fi
+
+          if [[ "$database_online" == "true" && "$form_released" == "true" ]]; then
+            form_available=true
+          fi
+
+          jq -n \
+            --arg service "supabase" \
+            --arg checkedAt "$checked_at" \
+            --arg validUntil "$valid_until" \
+            --argjson databaseOnline "$database_online" \
+            --argjson formReleased "$form_released" \
+            --argjson formAvailable "$form_available" \
+            --argjson forcedOffline "$forced_offline" \
+            --argjson checksMade "$checks_made" \
+            --argjson checksPassed "$checks_passed" \
+            --argjson httpStatus "$last_http_status" \
+            '{
+              service: $service,
+              databaseOnline: $databaseOnline,
+              formReleased: $formReleased,
+              formAvailable: $formAvailable,
+              forcedOffline: $forcedOffline,
+              checkedAt: $checkedAt,
+              validUntil: $validUntil,
+              checksMade: $checksMade,
+              checksPassed: $checksPassed,
+              httpStatus: $httpStatus
+            }' > "$STATUS_FILE"
+
+          echo "database_online=$database_online" >> "$GITHUB_OUTPUT"
+          echo "forced_offline=$forced_offline" >> "$GITHUB_OUTPUT"
+          jq . "$STATUS_FILE"
+
+      - name: Prepare the public site files
+        shell: bash
+        run: |
+          set -eu
+          publish_directory="${RUNNER_TEMP}/romilia-site"
+          mkdir -p "$publish_directory"
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'supabase/' \
+            --exclude '*.md' \
+            --exclude 'romilia-supabase-kit/' \
+            "${SITE_SOURCE%/}/" "$publish_directory/"
+          cp "$STATUS_FILE" "$publish_directory/supabase-status.json"
+
+      - name: Set up GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the public site files
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/romilia-site
+
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the site
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  report:
+    if: ${{ always() }}
+    needs:
+      - prepare
+      - deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report the result
+        shell: bash
+        env:
+          DATABASE_ONLINE: ${{ needs.prepare.outputs.database_online }}
+          FORCED_OFFLINE: ${{ needs.prepare.outputs.forced_offline }}
+          PREPARE_RESULT: ${{ needs.prepare.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+        run: |
+          if [[ "$PREPARE_RESULT" != "success" || "$DEPLOY_RESULT" != "success" ]]; then
+            echo "The site deployment failed."
+            exit 1
+          fi
+
+          if [[ "$DATABASE_ONLINE" != "true" && "$FORCED_OFFLINE" != "true" ]]; then
+            echo "The Supabase database check failed."
+            exit 1
+          fi
+
+          if [[ "$FORCED_OFFLINE" == "true" ]]; then
+            echo "The offline test state is live."
+          else
+            echo "The Supabase database check passed."
+          fi

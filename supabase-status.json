@@ -1,0 +1,12 @@
+{
+  "service": "supabase",
+  "databaseOnline": false,
+  "formReleased": false,
+  "formAvailable": false,
+  "forcedOffline": false,
+  "checkedAt": "1970-01-01T00:00:00Z",
+  "validUntil": "1970-01-01T00:00:00Z",
+  "checksMade": 0,
+  "checksPassed": 0,
+  "httpStatus": 0
+}
