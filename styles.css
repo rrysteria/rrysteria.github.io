@@ -1390,16 +1390,6 @@ button:focus-visible {
   overflow: hidden;
 }
 
-.form-status::before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 0.3rem;
-  background: var(--romilia-accent);
-  content: "";
-}
-
 .form-status__eyebrow {
   color: currentColor;
   font-family: Arial, Helvetica, sans-serif;
@@ -1767,7 +1757,6 @@ button:focus-visible {
 
 .service-switcher a + a {
   justify-content: end;
-  border-left: 1px solid var(--romilia-line);
   text-align: right;
 }
 
@@ -1938,6 +1927,5 @@ button:focus-visible {
 
   .service-switcher a + a {
     border-top: 1px solid var(--romilia-line);
-    border-left: 0;
   }
 }
