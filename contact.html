@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en-GB" data-bs-core="elegant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Contact Romilia about a photography session or a creative project."
+    />
+    <title>Contact | Romilia</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/halfmoon@2.0.2/css/halfmoon.min.css"
+      rel="stylesheet"
+      integrity="sha256-RjeFzczeuZHCyS+Gvz+kleETzBF/o84ZRHukze/yv6o="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/halfmoon@2.0.2/css/cores/halfmoon.elegant.css"
+      rel="stylesheet"
+      crossorigin="anonymous"
+    />
+    <link href="styles.css" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  <body class="page-contact">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header site-header--over-media" data-site-header>
+      <nav class="navbar navbar-expand-md" aria-label="Primary navigation">
+        <div class="site-header__inner container-fluid">
+          <a
+            class="brand navbar-brand"
+            href="index.html"
+            aria-label="Romilia home"
+            >ROMILIA</a
+          >
+
+          <button
+            class="menu-button navbar-toggler"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open the menu"
+            data-menu-button
+          >
+            <span
+              class="menu-button__icon"
+              aria-hidden="true"
+              data-menu-open-icon
+            >
+              <i class="icon" data-lucide="menu"></i>
+            </span>
+            <span
+              class="menu-button__icon"
+              aria-hidden="true"
+              data-menu-close-icon
+              hidden
+            >
+              <i class="icon" data-lucide="x"></i>
+            </span>
+            <span data-menu-label>Menu</span>
+          </button>
+
+          <div
+            class="primary-navigation collapse navbar-collapse"
+            id="primary-navigation"
+            data-navigation
+          >
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Work</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="services.html">Services</a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  href="contact.html"
+                  aria-current="page"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="contact-hero" aria-labelledby="contact-title">
+        <img
+          class="contact-hero__image"
+          src="gallery/367524DE-3727-41FB-B445-99E462244BE6.jpg"
+          alt="A red fashion portrait from the Romilia gallery"
+          draggable="false"
+        />
+        <div class="contact-hero__shade"></div>
+        <div class="contact-hero__content container-fluid">
+          <p class="section-label">Contact</p>
+          <h1 id="contact-title">Tell Romilia about your idea.</h1>
+          <p>
+            Give the main facts about the photographs you need. Romilia can then
+            discuss the next step with you.
+          </p>
+          <a class="action-button action-button--light" href="#contact-form">
+            <span>Start the form</span>
+            <i class="icon" data-lucide="arrow-down" aria-hidden="true"></i>
+          </a>
+        </div>
+      </section>
+
+      <section
+        class="enquiry-section enquiry-section--contact container-fluid"
+        id="contact-form"
+        aria-labelledby="contact-form-title"
+      >
+        <div class="enquiry-section__intro">
+          <p class="section-label">Project details</p>
+          <h2 id="contact-form-title">Start your enquiry.</h2>
+          <p>
+            This draft form does not send or save your details yet. Connect a
+            form service before the site goes live.
+          </p>
+        </div>
+
+        <form class="enquiry-form" data-preview-form>
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Your name</span>
+              <input name="name" type="text" autocomplete="name" required />
+            </label>
+
+            <label class="form-field">
+              <span>Your email address</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+
+            <label class="form-field">
+              <span>Service</span>
+              <select name="service" data-service-select required>
+                <option value="">Select a service</option>
+                <option value="studio-portfolio">
+                  Studio portfolio session
+                </option>
+                <option value="location-portfolio">
+                  On-location portfolio session
+                </option>
+                <option value="headshots">Headshot session</option>
+                <option value="creative-project">
+                  Creative or editorial project
+                </option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span>Preferred date</span>
+              <input name="preferred-date" type="date" />
+            </label>
+
+            <label class="form-field">
+              <span>Budget</span>
+              <select name="budget">
+                <option value="">Select a budget range</option>
+                <option value="not-set">I do not have a set budget</option>
+                <option value="under-250">Less than £250</option>
+                <option value="250-500">£250 to £500</option>
+                <option value="500-1000">£500 to £1,000</option>
+                <option value="over-1000">More than £1,000</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span>Where do you want the session?</span>
+              <input
+                name="location"
+                type="text"
+                autocomplete="address-level2"
+                placeholder="Town, city, or studio"
+              />
+            </label>
+
+            <label class="form-field form-field--wide">
+              <span>Project details</span>
+              <textarea
+                name="project-details"
+                rows="7"
+                placeholder="Tell Romilia about your goal, the people involved, and the final photographs you need."
+                required
+              ></textarea>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button class="action-button" type="submit">
+              <span>Send the enquiry</span>
+              <i class="icon" data-lucide="send" aria-hidden="true"></i>
+            </button>
+            <p class="form-note">This form is not connected yet.</p>
+          </div>
+          <p
+            class="form-status"
+            role="status"
+            tabindex="-1"
+            data-form-status
+          ></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer container-fluid">
+      <div>
+        <p class="section-label">View the work</p>
+        <p class="site-footer__statement">See the current portfolio.</p>
+      </div>
+      <div class="site-footer__links">
+        <a class="icon-link" href="index.html">
+          <span>Open the gallery</span>
+          <i class="icon" data-lucide="arrow-up-right" aria-hidden="true"></i>
+        </a>
+      </div>
+      <p class="site-footer__legal">
+        © <span data-current-year>2026</span> Romilia. All rights reserved.
+      </p>
+    </footer>
+  </body>
+</html>

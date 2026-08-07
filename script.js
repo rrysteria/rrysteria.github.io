@@ -136,16 +136,6 @@ renderIcons();
   let wheelPoint = null;
   const activePointers = new Map();
 
-  function formatTitleFromFilename(filename) {
-    const baseName = filename
-      .split("/")
-      .pop()
-      .replace(/\.[^/.]+$/, "");
-    return baseName
-      .replace(/[-_]/g, " ")
-      .replace(/\b\w/g, (character) => character.toUpperCase());
-  }
-
   function getFullImageSource(source) {
     if (
       /^(?:[a-z]+:)?\/\//i.test(source) ||
@@ -159,23 +149,26 @@ renderIcons();
     return `./gallery/${source}`;
   }
 
-  function normalizeItem(rawItem) {
+  function normalizeItem(rawItem, index = 0) {
+    const defaultTitle = `Portfolio photograph ${String(index + 1).padStart(2, "0")}`;
+
     if (typeof rawItem === "string") {
       return {
         src: getFullImageSource(rawItem),
-        title: formatTitleFromFilename(rawItem),
-        category: "Gallery",
+        title: defaultTitle,
+        category: "Selected work",
       };
     }
 
     const source = rawItem.src || rawItem.filename || rawItem.url || "";
+    const suppliedTitle = String(rawItem.title || "").trim();
+    const suppliedCategory = String(
+      rawItem.category || rawItem.details || "",
+    ).trim();
     return {
       src: getFullImageSource(source),
-      title:
-        rawItem.title || formatTitleFromFilename(source) || "Untitled work",
-      category: rawItem.category || rawItem.details || "Gallery",
-      width: rawItem.width,
-      height: rawItem.height,
+      title: suppliedTitle,
+      category: suppliedCategory
     };
   }
 
@@ -1013,6 +1006,58 @@ renderIcons();
     });
   });
 
+  function fetchImageDimensions(items) {
+    return Promise.all(
+      items.map((item) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            item.width = img.naturalWidth;
+            item.height = img.naturalHeight;
+            item.aspectRatio = img.naturalWidth / img.naturalHeight;
+            resolve(item);
+          };
+          img.onerror = () => {
+            item.width = 300;
+            item.height = 400;
+            item.aspectRatio = 0.75;
+            resolve(item);
+          };
+          img.src = item.src;
+        });
+      }),
+    );
+  }
+
+  function getGridColumnCount() {
+    const width = window.innerWidth;
+    if (width <= 576) return 1;
+    if (width <= 832) return 2;
+    if (width <= 1152) return 3;
+    return 4;
+  }
+
+  function organizeItemsByDimensions(items, numCols = 4) {
+    if (numCols <= 1 || items.length <= 1) return items;
+    const columns = Array.from({ length: numCols }, () => []);
+    const columnHeights = new Array(numCols).fill(0);
+
+    items.forEach((item) => {
+      const itemRatio =
+        item.height && item.width ? item.height / item.width : 1.33;
+      let minCol = 0;
+      for (let i = 1; i < numCols; i++) {
+        if (columnHeights[i] < columnHeights[minCol]) {
+          minCol = i;
+        }
+      }
+      columns[minCol].push(item);
+      columnHeights[minCol] += itemRatio;
+    });
+
+    return columns.flat();
+  }
+
   async function getGalleryManifest() {
     const manifestPaths = ["./gallery/images.json", "./images.json"];
 
@@ -1021,9 +1066,20 @@ renderIcons();
         const response = await fetch(manifestPath);
         if (!response.ok) continue;
         const data = await response.json();
-        if (!Array.isArray(data))
-          throw new Error("The gallery data must contain a list.");
-        return data;
+        if (Array.isArray(data)) {
+          return { organizeByDimensions: false, items: data };
+        }
+        if (typeof data === "object" && data !== null) {
+          const items = Array.isArray(data.images)
+            ? data.images
+            : Array.isArray(data.gallery)
+              ? data.gallery
+              : [];
+          return {
+            organizeByDimensions: Boolean(data.organizeByDimensions),
+            items,
+          };
+        }
       } catch (error) {
         if (manifestPath === manifestPaths[manifestPaths.length - 1])
           throw error;
@@ -1034,8 +1090,15 @@ renderIcons();
   }
 
   getGalleryManifest()
-    .then((data) => renderGrid(data.map(normalizeItem)))
-    .catch((error) => {
+    .then(async ({ organizeByDimensions, items }) => {
+      const normalized = items.map(normalizeItem);
+      const itemsWithDimensions = await fetchImageDimensions(normalized);
+      const finalItems = organizeByDimensions
+        ? organizeItemsByDimensions(itemsWithDimensions, getGridColumnCount())
+        : itemsWithDimensions;
+      renderGrid(finalItems);
+    })
+    .catch(async (error) => {
       console.error("Gallery load error:", error);
       const fallbackList = [
         "029589010004.jpg",
@@ -1053,6 +1116,99 @@ renderIcons();
         "IMG_0396.JPG",
         "IMG_7730.JPG",
       ];
-      renderGrid(fallbackList.map(normalizeItem));
+      const normalizedFallback = fallbackList.map(normalizeItem);
+      const fallbackWithDimensions =
+        await fetchImageDimensions(normalizedFallback);
+      renderGrid(fallbackWithDimensions);
     });
 })();
+
+document.querySelectorAll("[data-product-gallery]").forEach((gallery) => {
+  const mainImage = gallery.querySelector("[data-product-main-image]");
+  const thumbnails = [...gallery.querySelectorAll("[data-product-thumbnail]")];
+
+  if (!mainImage || !thumbnails.length) return;
+
+  function showProductImage(thumbnail) {
+    const source = thumbnail.dataset.imageSource;
+    if (!source || mainImage.getAttribute("src") === source) return;
+
+    thumbnails.forEach((item) => {
+      item.setAttribute("aria-pressed", String(item === thumbnail));
+    });
+
+    mainImage.classList.add("is-changing");
+    mainImage.addEventListener(
+      "load",
+      () => mainImage.classList.remove("is-changing"),
+      { once: true },
+    );
+    mainImage.addEventListener(
+      "error",
+      () => mainImage.classList.remove("is-changing"),
+      { once: true },
+    );
+    mainImage.src = source;
+    mainImage.alt = thumbnail.dataset.imageAlt || "Romilia service sample";
+  }
+
+  thumbnails.forEach((thumbnail, index) => {
+    thumbnail.addEventListener("click", () => showProductImage(thumbnail));
+    thumbnail.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      const direction = event.key === "ArrowRight" ? 1 : -1;
+      const nextIndex =
+        (index + direction + thumbnails.length) % thumbnails.length;
+      thumbnails[nextIndex].focus();
+      showProductImage(thumbnails[nextIndex]);
+    });
+  });
+});
+
+const requestedService = new URLSearchParams(window.location.search).get(
+  "service",
+);
+
+document.querySelectorAll("[data-service-select]").forEach((select) => {
+  if (!requestedService) return;
+  const matchingOption = [...select.options].find(
+    (option) => option.value === requestedService,
+  );
+  if (matchingOption) select.value = requestedService;
+});
+
+const today = new Date();
+const minimumDate = [
+  today.getFullYear(),
+  String(today.getMonth() + 1).padStart(2, "0"),
+  String(today.getDate()).padStart(2, "0"),
+].join("-");
+
+document.querySelectorAll('input[type="date"]').forEach((dateInput) => {
+  dateInput.min = minimumDate;
+});
+
+document.querySelectorAll("[data-preview-form]").forEach((form) => {
+  const status = form.querySelector("[data-form-status]");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!status) return;
+    status.textContent =
+      "This form is not connected. Your details were not sent or saved.";
+    status.focus();
+  });
+});
+
+document.addEventListener("contextmenu", (event) => {
+  if (event.target instanceof Element && event.target.closest("img")) {
+    event.preventDefault();
+  }
+});
+
+document.addEventListener("dragstart", (event) => {
+  if (event.target instanceof Element && event.target.closest("img")) {
+    event.preventDefault();
+  }
+});

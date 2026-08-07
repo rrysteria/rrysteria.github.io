@@ -1,100 +1,75 @@
-[
-  {
-    "src": "029589010004.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 259,
-    "height": 390
-  },
-  {
-    "src": "029589010008.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 141,
-    "height": 213
-  },
-  {
-    "src": "029589010024.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 563,
-    "height": 373
-  },
-  {
-    "src": "0A82CE6B-D839-4DD0-8982-B2ABBB6BFF1F.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 511,
-    "height": 384
-  },
-  {
-    "src": "1330369.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 958,
-    "height": 1276
-  },
-  {
-    "src": "210730010007.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 346,
-    "height": 230
-  },
-  {
-    "src": "210730010014.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 846,
-    "height": 1276
-  },
-  {
-    "src": "210730010015.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 1698,
-    "height": 1276
-  },
-  {
-    "src": "210730010016.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 135,
-    "height": 204
-  },
-  {
-    "src": "367524DE-3727-41FB-B445-99E462244BE6.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 958,
-    "height": 1276
-  },
-  {
-    "src": "CA79374D-EDE1-400D-BFEF-63833209BDD9.jpg",
-    "title": "title",
-    "category": "category",
-    "width": 958,
-    "height": 1276
-  },
-  {
-    "src": "D5581B88-4682-457E-AA70-C635F7040CB1.jpeg",
-    "title": "title",
-    "category": "category",
-    "width": 930,
-    "height": 1276
-  },
-  {
-    "src": "IMG_0396.JPG",
-    "title": "title",
-    "category": "category",
-    "width": 313,
-    "height": 417
-  },
-  {
-    "src": "IMG_7730.JPG",
-    "title": "title",
-    "category": "category",
-    "width": 1020,
-    "height": 1276
-  }
-]
+{
+  "organizeByDimensions": true,
+  "images": [
+    {
+      "src": "029589010004.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "029589010008.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "029589010024.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "0A82CE6B-D839-4DD0-8982-B2ABBB6BFF1F.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "1330369.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "210730010007.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "210730010014.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "210730010015.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "210730010016.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "367524DE-3727-41FB-B445-99E462244BE6.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "CA79374D-EDE1-400D-BFEF-63833209BDD9.jpg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "D5581B88-4682-457E-AA70-C635F7040CB1.jpeg",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "IMG_0396.JPG",
+      "title": "title",
+      "category": "category"
+    },
+    {
+      "src": "IMG_7730.JPG",
+      "title": "title",
+      "category": "category"
+    }
+  ]
+}
