@@ -196,6 +196,17 @@ button:focus-visible {
   transform-origin: left;
 }
 
+.primary-navigation .nav-link--social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.primary-navigation .nav-link--social .icon {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
 .menu-button {
   display: none;
   align-items: center;
@@ -1929,3 +1940,252 @@ button:focus-visible {
     border-top: 1px solid var(--romilia-line);
   }
 }
+
+.form-consent a,
+.site-footer__legal a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  transition: color 150ms ease;
+}
+
+.form-consent a:hover,
+.form-consent a:focus-visible {
+  color: var(--romilia-accent);
+}
+
+.site-footer__legal a:hover,
+.site-footer__legal a:focus-visible {
+  color: var(--romilia-paper);
+}
+
+.privacy-hero {
+  padding-top: clamp(3rem, 6vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--romilia-line);
+}
+
+.privacy-hero h1 {
+  margin: 0.5rem 0 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(3.2rem, 7vw, 7rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  line-height: 0.92;
+}
+
+.privacy-hero__lead {
+  max-width: 44rem;
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  line-height: 1.4;
+}
+
+.privacy-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  color: var(--romilia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.privacy-section {
+  padding-top: clamp(2.5rem, 5vw, 5rem);
+  padding-bottom: var(--romilia-section-space);
+}
+
+.privacy-layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 6rem);
+  align-items: start;
+}
+
+.privacy-sidebar {
+  position: sticky;
+  top: 8rem;
+}
+
+.privacy-toc {
+  padding: 1.5rem;
+  border: 1px solid var(--romilia-line);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--romilia-paper) 92%, #fff);
+}
+
+.privacy-toc__title {
+  margin: 0 0 0.85rem;
+  color: var(--romilia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.privacy-toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.privacy-toc a {
+  color: var(--romilia-ink);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.privacy-toc a:hover,
+.privacy-toc a:focus-visible {
+  color: var(--romilia-accent);
+  text-decoration: underline;
+}
+
+.privacy-body {
+  max-width: 48rem;
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.privacy-block {
+  scroll-margin-top: 8rem;
+}
+
+.privacy-block h2 {
+  margin: 0 0 1.25rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.privacy-block p {
+  margin: 0 0 1rem;
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+.privacy-block p:last-child {
+  margin-bottom: 0;
+}
+
+.privacy-list {
+  margin: 1.25rem 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.privacy-list li {
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.privacy-card {
+  margin: 1.5rem 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--romilia-line);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--romilia-paper) 95%, #fff);
+}
+
+.privacy-card h3 {
+  margin: 0 0 0.75rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.privacy-card p {
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.privacy-card__tag {
+  margin: 0 0 0.4rem;
+  color: var(--romilia-accent);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.privacy-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.privacy-grid-cards .privacy-card {
+  margin: 0;
+}
+
+@media (max-width: 58rem) {
+  .privacy-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .privacy-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 38rem) {
+  .privacy-grid-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.under-construction {
+  min-height: clamp(28rem, 50vh, 42rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(3rem, 6vw, 6rem) var(--romilia-gutter);
+  text-align: center;
+}
+
+.under-construction__card {
+  max-width: 36rem;
+  padding: clamp(2rem, 5vw, 3.5rem);
+  border: 1px solid var(--romilia-line);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--romilia-paper) 95%, #fff);
+}
+
+.under-construction__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: 1.25rem;
+  color: var(--romilia-accent);
+}
+
+.under-construction h1 {
+  margin: 0 0 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.under-construction p {
+  margin: 0 0 2rem;
+  color: var(--romilia-muted);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+

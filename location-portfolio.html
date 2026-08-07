@@ -21,7 +21,7 @@
       crossorigin="anonymous"
     />
     <link href="styles.css" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://unpkg.com/lucide@0.420.0/dist/umd/lucide.min.js" defer></script>
     <script src="script.js" defer></script>
   </head>
 
@@ -69,13 +69,32 @@
           >
             <ul class="navbar-nav ms-auto">
               <li class="nav-item">
-                <a class="nav-link" href="index.html">Work</a>
+                <a class="nav-link" href="index.html">Portfolio</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="fashion.html">Fashion</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="services.html">Services</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="contact.html">Contact</a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link nav-link--social"
+                  href="https://www.instagram.com/romiliawear"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Follow @romiliawear on Instagram (opens in a new tab)"
+                >
+                  <i
+                    class="icon"
+                    data-lucide="instagram"
+                    aria-hidden="true"
+                  ></i>
+                  <span>@romiliawear</span>
+                </a>
               </li>
             </ul>
           </div>
@@ -215,9 +234,14 @@
           <span>Contact Romilia</span>
           <i class="icon" data-lucide="arrow-up-right" aria-hidden="true"></i>
         </a>
+        <a class="icon-link" href="privacy.html">
+          <span>Privacy notice</span>
+          <i class="icon" data-lucide="shield-check" aria-hidden="true"></i>
+        </a>
       </div>
       <p class="site-footer__legal">
-        © <span data-current-year>2026</span> Romilia. All rights reserved.
+        © <span data-current-year>2026</span> Romilia. All rights reserved. ·
+        <a href="privacy.html">Privacy notice</a>
       </p>
     </footer>
   </body>
