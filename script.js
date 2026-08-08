@@ -149,24 +149,43 @@ renderIcons();
     return `./gallery/${source}`;
   }
 
+  function getThumbnailImageSource(fullSrc) {
+    if (
+      /^(?:[a-z]+:)?\/\//i.test(fullSrc) ||
+      fullSrc.startsWith("data:")
+    ) {
+      return fullSrc;
+    }
+    // E.g. ./gallery/headshot/headshot-romilia-1.JPG -> ./gallery/headshot/thumbnail/headshot-romilia-1.jpg
+    const parts = fullSrc.split("/");
+    const filename = parts.pop();
+    const basename = filename.substring(0, filename.lastIndexOf(".")) || filename;
+    const dir = parts.join("/");
+    return `${dir}/thumbnail/${basename}.jpg`;
+  }
+
   function normalizeItem(rawItem, index = 0) {
     const defaultTitle = `Portfolio photograph ${String(index + 1).padStart(2, "0")}`;
 
     if (typeof rawItem === "string") {
+      const src = getFullImageSource(rawItem);
       return {
-        src: getFullImageSource(rawItem),
+        src,
+        thumbSrc: getThumbnailImageSource(src),
         title: defaultTitle,
         category: "Selected work",
       };
     }
 
     const source = rawItem.src || rawItem.filename || rawItem.url || "";
+    const src = getFullImageSource(source);
     const suppliedTitle = String(rawItem.title || "").trim();
     const suppliedCategory = String(
       rawItem.category || rawItem.details || "",
     ).trim();
     return {
-      src: getFullImageSource(source),
+      src,
+      thumbSrc: getThumbnailImageSource(src),
       title:
         suppliedTitle && suppliedTitle.toLowerCase() !== "title"
           ? suppliedTitle
@@ -200,7 +219,8 @@ renderIcons();
       const card = document.createElement("article");
       const button = document.createElement("button");
       const media = document.createElement("span");
-      const image = document.createElement("img");
+      const thumbImage = document.createElement("img");
+      const fullImage = document.createElement("img");
       const viewAction = document.createElement("span");
       const viewIcon = document.createElement("i");
       const viewText = document.createElement("span");
@@ -216,17 +236,27 @@ renderIcons();
       media.className = "project-card__media";
       if (item.width && item.height)
         media.style.aspectRatio = `${item.width} / ${item.height}`;
-      image.className = "project-card__image";
-      image.src = item.src;
-      image.alt = item.title;
-      image.loading = index < 4 ? "eager" : "lazy";
-      image.decoding = "async";
-      image.fetchPriority = index < 2 ? "high" : "auto";
-      image.draggable = false;
+
+      // Low-res thumbnail image placeholder
+      thumbImage.className = "project-card__thumb";
+      thumbImage.src = item.thumbSrc || item.src;
+      thumbImage.alt = "";
+      thumbImage.draggable = false;
+      thumbImage.loading = index < 6 ? "eager" : "lazy";
+
+      // Full resolution image
+      fullImage.className = "project-card__image";
+      fullImage.src = item.src;
+      fullImage.alt = item.title;
+      fullImage.loading = index < 4 ? "eager" : "lazy";
+      fullImage.decoding = "async";
+      fullImage.fetchPriority = index < 2 ? "high" : "auto";
+      fullImage.draggable = false;
       if (item.width && item.height) {
-        image.width = item.width;
-        image.height = item.height;
+        fullImage.width = item.width;
+        fullImage.height = item.height;
       }
+
       viewAction.className = "project-card__view-action";
       viewAction.setAttribute("aria-hidden", "true");
       viewIcon.className = "icon";
@@ -239,32 +269,31 @@ renderIcons();
       category.textContent = item.category;
 
       viewAction.append(viewIcon, viewText);
-      media.append(image, viewAction);
+      media.append(thumbImage, fullImage, viewAction);
       caption.append(title, category);
       button.append(media);
       card.append(button);
 
       const pokeImage = () => {
-        if (image.naturalWidth && image.naturalHeight) {
-          media.style.aspectRatio = `${image.naturalWidth} / ${image.naturalHeight}`;
+        if (fullImage.naturalWidth && fullImage.naturalHeight) {
+          media.style.aspectRatio = `${fullImage.naturalWidth} / ${fullImage.naturalHeight}`;
         }
-        image.classList.add("is-image-loaded");
+        fullImage.classList.add("is-image-loaded");
         card.classList.add("is-loaded");
       };
 
       const showLoadedImage = () => {
         pokeImage();
-        // Decode image asynchronously to warm GPU texture cache and force paint
-        if (typeof image.decode === "function") {
-          image.decode().then(pokeImage).catch(pokeImage);
+        if (typeof fullImage.decode === "function") {
+          fullImage.decode().then(pokeImage).catch(pokeImage);
         }
       };
 
-      if (image.complete) {
+      if (fullImage.complete) {
         showLoadedImage();
       } else {
-        image.addEventListener("load", showLoadedImage, { once: true });
-        image.addEventListener("error", pokeImage, { once: true });
+        fullImage.addEventListener("load", showLoadedImage, { once: true });
+        fullImage.addEventListener("error", pokeImage, { once: true });
       }
 
       // IntersectionObserver fallback poke in case browser defers render until scroll/interaction
@@ -273,7 +302,7 @@ renderIcons();
           (entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
-                if (image.complete) pokeImage();
+                if (fullImage.complete) pokeImage();
                 observer.unobserve(card);
               }
             });
@@ -283,7 +312,7 @@ renderIcons();
         observer.observe(card);
       }
 
-      galleryImages.push(image);
+      galleryImages.push(fullImage);
       galleryMedia.push(media);
       galleryButtons.push(button);
       fragment.append(card);
