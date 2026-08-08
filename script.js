@@ -244,18 +244,43 @@ renderIcons();
       button.append(media);
       card.append(button);
 
-      const showLoadedImage = () => {
+      const pokeImage = () => {
         if (image.naturalWidth && image.naturalHeight) {
           media.style.aspectRatio = `${image.naturalWidth} / ${image.naturalHeight}`;
         }
         image.classList.add("is-image-loaded");
-        requestAnimationFrame(() => card.classList.add("is-loaded"));
+        card.classList.add("is-loaded");
       };
 
-      if (image.complete) showLoadedImage();
-      else {
+      const showLoadedImage = () => {
+        pokeImage();
+        // Decode image asynchronously to warm GPU texture cache and force paint
+        if (typeof image.decode === "function") {
+          image.decode().then(pokeImage).catch(pokeImage);
+        }
+      };
+
+      if (image.complete) {
+        showLoadedImage();
+      } else {
         image.addEventListener("load", showLoadedImage, { once: true });
-        image.addEventListener("error", showLoadedImage, { once: true });
+        image.addEventListener("error", pokeImage, { once: true });
+      }
+
+      // IntersectionObserver fallback poke in case browser defers render until scroll/interaction
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                if (image.complete) pokeImage();
+                observer.unobserve(card);
+              }
+            });
+          },
+          { rootMargin: "200px" },
+        );
+        observer.observe(card);
       }
 
       galleryImages.push(image);
@@ -269,6 +294,17 @@ renderIcons();
     if (previousButton) previousButton.hidden = items.length < 2;
     if (nextButton) nextButton.hidden = items.length < 2;
     renderIcons();
+
+    // Secondary global poke pass to guarantee paint without user interaction
+    requestAnimationFrame(() => {
+      galleryImages.forEach((img, idx) => {
+        if (img.complete && img.naturalWidth) {
+          img.classList.add("is-image-loaded");
+          const c = img.closest(".project-card");
+          if (c) c.classList.add("is-loaded");
+        }
+      });
+    });
   }
 
   function waitForImage(image) {
@@ -1012,27 +1048,27 @@ renderIcons();
     });
   });
 
-  function fetchImageDimensions(items) {
-    return Promise.all(
-      items.map((item) => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            item.width = img.naturalWidth;
-            item.height = img.naturalHeight;
-            item.aspectRatio = img.naturalWidth / img.naturalHeight;
-            resolve(item);
-          };
-          img.onerror = () => {
-            item.width = 300;
-            item.height = 400;
-            item.aspectRatio = 0.75;
-            resolve(item);
-          };
-          img.src = item.src;
-        });
-      }),
-    );
+  function fetchImageDimensionsSingle(item) {
+    return new Promise((resolve) => {
+      if (item.width && item.height) {
+        item.aspectRatio = item.width / item.height;
+        return resolve(item);
+      }
+      const img = new Image();
+      img.onload = () => {
+        item.width = img.naturalWidth;
+        item.height = img.naturalHeight;
+        item.aspectRatio = img.naturalWidth / img.naturalHeight;
+        resolve(item);
+      };
+      img.onerror = () => {
+        item.width = 300;
+        item.height = 400;
+        item.aspectRatio = 0.75;
+        resolve(item);
+      };
+      img.src = item.src;
+    });
   }
 
   function getGridColumnCount() {
@@ -1043,12 +1079,49 @@ renderIcons();
     return 4;
   }
 
+  function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
   function organizeItemsByDimensions(items, numCols = 4) {
     if (numCols <= 1 || items.length <= 1) return items;
+
+    // Separate landscape (aspectRatio > 1.1) and portrait/square (aspectRatio <= 1.1)
+    const landscapes = [];
+    const portraits = [];
+
+    items.forEach((item) => {
+      const ratio = item.width && item.height ? item.width / item.height : 0.75;
+      if (ratio > 1.1) landscapes.push(item);
+      else portraits.push(item);
+    });
+
+    // Interleave landscape and portrait images to create a balanced stream
+    const mixedQueue = [];
+    let lIdx = 0;
+    let pIdx = 0;
+    const lLen = landscapes.length;
+    const pLen = portraits.length;
+
+    while (lIdx < lLen || pIdx < pLen) {
+      // Determine ratio of portraits to landscapes remaining
+      if (lIdx < lLen && (pIdx >= pLen || (lIdx / lLen <= pIdx / pLen))) {
+        mixedQueue.push(landscapes[lIdx++]);
+      } else if (pIdx < pLen) {
+        mixedQueue.push(portraits[pIdx++]);
+      }
+    }
+
+    // Distribute into columns minimizing height disparity and avoiding consecutive orientation clustering
     const columns = Array.from({ length: numCols }, () => []);
     const columnHeights = new Array(numCols).fill(0);
 
-    items.forEach((item) => {
+    mixedQueue.forEach((item) => {
       const itemRatio =
         item.height && item.width ? item.height / item.width : 1.33;
       let minCol = 0;
@@ -1061,7 +1134,17 @@ renderIcons();
       columnHeights[minCol] += itemRatio;
     });
 
-    return columns.flat();
+    // Flatten in round-robin fashion so rows seamlessly alternate between aspect ratios visually
+    const maxItems = Math.max(...columns.map((col) => col.length));
+    const result = [];
+    for (let r = 0; r < maxItems; r++) {
+      for (let c = 0; c < numCols; c++) {
+        if (r < columns[c].length) {
+          result.push(columns[c][r]);
+        }
+      }
+    }
+    return result;
   }
 
   async function getGalleryManifest() {
@@ -1073,7 +1156,7 @@ renderIcons();
         if (!response.ok) continue;
         const data = await response.json();
         if (Array.isArray(data)) {
-          return { organizeByDimensions: false, items: data };
+          return { organizeByDimensions: false, shuffleImages: false, items: data };
         }
         if (typeof data === "object" && data !== null) {
           const items = Array.isArray(data.images)
@@ -1083,6 +1166,7 @@ renderIcons();
               : [];
           return {
             organizeByDimensions: Boolean(data.organizeByDimensions),
+            shuffleImages: Boolean(data.shuffleImages),
             items,
           };
         }
@@ -1096,36 +1180,61 @@ renderIcons();
   }
 
   getGalleryManifest()
-    .then(async ({ organizeByDimensions, items }) => {
+    .then(async ({ organizeByDimensions, shuffleImages, items }) => {
       const normalized = items.map(normalizeItem);
-      const itemsWithDimensions = await fetchImageDimensions(normalized);
-      const finalItems = organizeByDimensions
-        ? organizeItemsByDimensions(itemsWithDimensions, getGridColumnCount())
-        : itemsWithDimensions;
-      renderGrid(finalItems);
+      let initialList = shuffleImages ? shuffleArray(normalized) : normalized;
+      
+      let sortedItems = initialList;
+      const allHaveDims = initialList.every(
+        (item) => item.width && item.height,
+      );
+
+      if (organizeByDimensions && allHaveDims) {
+        sortedItems = organizeItemsByDimensions(
+          initialList,
+          getGridColumnCount(),
+        );
+      }
+
+      // Initial render with placeholder ratios
+      renderGrid(sortedItems);
+
+      // Asynchronously process photos one by one to ensure fast display & progress on slow connections
+      for (let i = 0; i < sortedItems.length; i++) {
+        await fetchImageDimensionsSingle(sortedItems[i]);
+        // Update DOM element ratio if it was measured dynamically
+        const cardMedia = galleryMedia[i];
+        if (cardMedia && sortedItems[i].width && sortedItems[i].height) {
+          cardMedia.style.aspectRatio = `${sortedItems[i].width} / ${sortedItems[i].height}`;
+        }
+        // Poke loaded card & image immediately as each finishes
+        if (galleryImages[i]) {
+          galleryImages[i].classList.add("is-image-loaded");
+          const card = galleryImages[i].closest(".project-card");
+          if (card) card.classList.add("is-loaded");
+        }
+      }
+
+      // If dimensions were not pre-calculated and organizeByDimensions was requested, re-organize grid once dimensions are known
+      if (organizeByDimensions && !allHaveDims) {
+        const reordered = organizeItemsByDimensions(
+          sortedItems,
+          getGridColumnCount(),
+        );
+        renderGrid(reordered);
+      }
     })
     .catch(async (error) => {
       console.error("Gallery load error:", error);
       const fallbackList = [
-        "029589010004.jpg",
-        "029589010008.jpg",
-        "029589010024.jpg",
-        "0A82CE6B-D839-4DD0-8982-B2ABBB6BFF1F.jpg",
-        "1330369.jpg",
-        "210730010007.jpg",
-        "210730010014.jpg",
-        "210730010015.jpg",
-        "210730010016.jpg",
-        "367524DE-3727-41FB-B445-99E462244BE6.jpg",
-        "CA79374D-EDE1-400D-BFEF-63833209BDD9.jpg",
-        "D5581B88-4682-457E-AA70-C635F7040CB1.jpeg",
-        "IMG_0396.JPG",
-        "IMG_7730.JPG",
+        "headshot/headshot-romilia-1.JPG",
+        "headshot/headshot-romilia-2.JPG",
+        "location/collaborative-mai-space-1.jpg",
+        "location/collaborative-mai-space-2.jpg",
+        "studio/studio-mai-space-1.jpeg",
       ];
       const normalizedFallback = fallbackList.map(normalizeItem);
-      const fallbackWithDimensions =
-        await fetchImageDimensions(normalizedFallback);
-      renderGrid(fallbackWithDimensions);
+      renderGrid(normalizedFallback);
     });
 })();
 

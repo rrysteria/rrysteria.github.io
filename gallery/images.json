@@ -1,75 +1,209 @@
 {
   "organizeByDimensions": true,
+  "shuffleImages": true,
   "images": [
     {
-      "src": "029589010004.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-romilia-1.JPG",
+      "title": "Headshot Romilia 1",
+      "category": "headshot",
+      "width": 1623,
+      "height": 2436
     },
     {
-      "src": "029589010008.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-romilia-2.JPG",
+      "title": "Headshot Romilia 2",
+      "category": "headshot",
+      "width": 1569,
+      "height": 2354
     },
     {
-      "src": "029589010024.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-romilia-3.JPG",
+      "title": "Headshot Romilia 3",
+      "category": "headshot",
+      "width": 1681,
+      "height": 2354
     },
     {
-      "src": "0A82CE6B-D839-4DD0-8982-B2ABBB6BFF1F.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-romilia-5.jpg",
+      "title": "Headshot Romilia 5",
+      "category": "headshot",
+      "width": 4632,
+      "height": 5790
     },
     {
-      "src": "1330369.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-romilia-6.jpeg",
+      "title": "Headshot Romilia 6",
+      "category": "headshot",
+      "width": 2827,
+      "height": 3958
     },
     {
-      "src": "210730010007.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-siona-1.jpg",
+      "title": "Headshot Siona 1",
+      "category": "headshot",
+      "width": 3130,
+      "height": 2075
     },
     {
-      "src": "210730010014.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-siona-2.jpg",
+      "title": "Headshot Siona 2",
+      "category": "headshot",
+      "width": 3130,
+      "height": 2075
     },
     {
-      "src": "210730010015.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "headshot/headshot-will-1.jpg",
+      "title": "Headshot Will 1",
+      "category": "headshot",
+      "width": 3130,
+      "height": 2075
     },
     {
-      "src": "210730010016.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "location/carousel-editorial-offsite-1.jpeg",
+      "title": "Carousel Editorial Offsite 1",
+      "category": "location",
+      "width": 2190,
+      "height": 1566
     },
     {
-      "src": "367524DE-3727-41FB-B445-99E462244BE6.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "location/carousel-editorial-offsite-2.jpeg",
+      "title": "Carousel Editorial Offsite 2",
+      "category": "location",
+      "width": 1583,
+      "height": 2374
     },
     {
-      "src": "CA79374D-EDE1-400D-BFEF-63833209BDD9.jpg",
-      "title": "title",
-      "category": "category"
+      "src": "location/carousel-editorial-offsite-3.JPG",
+      "title": "Carousel Editorial Offsite 3",
+      "category": "location",
+      "width": 3575,
+      "height": 2394
     },
     {
-      "src": "D5581B88-4682-457E-AA70-C635F7040CB1.jpeg",
-      "title": "title",
-      "category": "category"
+      "src": "location/carousel-editorial-offsite-4.JPG",
+      "title": "Carousel Editorial Offsite 4",
+      "category": "location",
+      "width": 3575,
+      "height": 2394
     },
     {
-      "src": "IMG_0396.JPG",
-      "title": "title",
-      "category": "category"
+      "src": "location/carousel-editorial-offsite-5.jpeg",
+      "title": "Carousel Editorial Offsite 5",
+      "category": "location",
+      "width": 2390,
+      "height": 3571
     },
     {
-      "src": "IMG_7730.JPG",
-      "title": "title",
-      "category": "category"
+      "src": "location/collaborative-mai-space-1.jpg",
+      "title": "Collaborative Mai Space 1",
+      "category": "location",
+      "width": 958,
+      "height": 1276
+    },
+    {
+      "src": "location/collaborative-mai-space-2.jpg",
+      "title": "Collaborative Mai Space 2",
+      "category": "location",
+      "width": 3130,
+      "height": 2075
+    },
+    {
+      "src": "location/collaborative-mai-space-3.jpg",
+      "title": "Collaborative Mai Space 3",
+      "category": "location",
+      "width": 563,
+      "height": 373
+    },
+    {
+      "src": "location/promotional-friday-rigg-1.jpeg",
+      "title": "Promotional Friday Rigg 1",
+      "category": "location",
+      "width": 3130,
+      "height": 2075
+    },
+    {
+      "src": "location/promotional-friday-rigg-2.jpeg",
+      "title": "Promotional Friday Rigg 2",
+      "category": "location",
+      "width": 4416,
+      "height": 2488
+    },
+    {
+      "src": "location/promotional-friday-rigg-4.jpeg",
+      "title": "Promotional Friday Rigg 4",
+      "category": "location",
+      "width": 1728,
+      "height": 1152
+    },
+    {
+      "src": "location/promotional-friday-rigg-5.jpg",
+      "title": "Promotional Friday Rigg 5",
+      "category": "location",
+      "width": 1698,
+      "height": 1276
+    },
+    {
+      "src": "location/promotional-friday-rigg-6.jpg",
+      "title": "Promotional Friday Rigg 6",
+      "category": "location",
+      "width": 846,
+      "height": 1276
+    },
+    {
+      "src": "location/promotional-street-1.JPG",
+      "title": "Promotional Street 1",
+      "category": "location",
+      "width": 313,
+      "height": 417
+    },
+    {
+      "src": "location/promotional-street-2.jpg",
+      "title": "Promotional Street 2",
+      "category": "location",
+      "width": 1538,
+      "height": 2048
+    },
+    {
+      "src": "location/romilia-wear-1.jpg",
+      "title": "Romilia Wear 1",
+      "category": "location",
+      "width": 958,
+      "height": 1276
+    },
+    {
+      "src": "location/romilia-wear-2.jpg",
+      "title": "Romilia Wear 2",
+      "category": "location",
+      "width": 511,
+      "height": 384
+    },
+    {
+      "src": "location/romilia-wear-3.jpg",
+      "title": "Romilia Wear 3",
+      "category": "location",
+      "width": 958,
+      "height": 1276
+    },
+    {
+      "src": "location/romilia-wear-4.JPG",
+      "title": "Romilia Wear 4",
+      "category": "location",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "location/romilia-wear-5.jpg",
+      "title": "Romilia Wear 5",
+      "category": "location",
+      "width": 5848,
+      "height": 7310
+    },
+    {
+      "src": "studio/studio-mai-space-1.jpeg",
+      "title": "Studio Mai Space 1",
+      "category": "studio",
+      "width": 930,
+      "height": 1276
     }
   ]
 }
