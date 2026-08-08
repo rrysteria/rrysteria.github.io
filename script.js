@@ -241,7 +241,7 @@ renderIcons();
       viewAction.append(viewIcon, viewText);
       media.append(image, viewAction);
       caption.append(title, category);
-      button.append(media, caption);
+      button.append(media);
       card.append(button);
 
       const showLoadedImage = () => {
