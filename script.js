@@ -197,6 +197,25 @@ renderIcons();
     };
   }
 
+  function preloadThumbnail(item) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        item.thumbLoaded = true;
+        if (!item.width || !item.height) {
+          item.width = img.naturalWidth;
+          item.height = img.naturalHeight;
+          item.aspectRatio = img.naturalWidth / img.naturalHeight;
+        }
+        resolve(item);
+      };
+      img.onerror = () => {
+        resolve(item);
+      };
+      img.src = item.thumbSrc || item.src;
+    });
+  }
+
   function renderGrid(items) {
     galleryItems = items;
     galleryImages = [];
@@ -219,8 +238,7 @@ renderIcons();
       const card = document.createElement("article");
       const button = document.createElement("button");
       const media = document.createElement("span");
-      const thumbImage = document.createElement("img");
-      const fullImage = document.createElement("img");
+      const image = document.createElement("img");
       const viewAction = document.createElement("span");
       const viewIcon = document.createElement("i");
       const viewText = document.createElement("span");
@@ -228,7 +246,7 @@ renderIcons();
       const title = document.createElement("span");
       const category = document.createElement("span");
 
-      card.className = "project-card";
+      card.className = "project-card is-loaded";
       card.dataset.index = String(index);
       button.type = "button";
       button.setAttribute("aria-haspopup", "dialog");
@@ -237,24 +255,14 @@ renderIcons();
       if (item.width && item.height)
         media.style.aspectRatio = `${item.width} / ${item.height}`;
 
-      // Low-res thumbnail image placeholder
-      thumbImage.className = "project-card__thumb";
-      thumbImage.src = item.thumbSrc || item.src;
-      thumbImage.alt = "";
-      thumbImage.draggable = false;
-      thumbImage.loading = index < 6 ? "eager" : "lazy";
-
-      // Full resolution image
-      fullImage.className = "project-card__image";
-      fullImage.src = item.src;
-      fullImage.alt = item.title;
-      fullImage.loading = index < 4 ? "eager" : "lazy";
-      fullImage.decoding = "async";
-      fullImage.fetchPriority = index < 2 ? "high" : "auto";
-      fullImage.draggable = false;
+      // Start with thumbnail src immediately (preloaded before render)
+      image.className = "project-card__image is-image-loaded";
+      image.src = item.thumbSrc || item.src;
+      image.alt = item.title;
+      image.draggable = false;
       if (item.width && item.height) {
-        fullImage.width = item.width;
-        fullImage.height = item.height;
+        image.width = item.width;
+        image.height = item.height;
       }
 
       viewAction.className = "project-card__view-action";
@@ -269,50 +277,12 @@ renderIcons();
       category.textContent = item.category;
 
       viewAction.append(viewIcon, viewText);
-      media.append(thumbImage, fullImage, viewAction);
+      media.append(image, viewAction);
       caption.append(title, category);
       button.append(media);
       card.append(button);
 
-      const pokeImage = () => {
-        if (fullImage.naturalWidth && fullImage.naturalHeight) {
-          media.style.aspectRatio = `${fullImage.naturalWidth} / ${fullImage.naturalHeight}`;
-        }
-        fullImage.classList.add("is-image-loaded");
-        card.classList.add("is-loaded");
-      };
-
-      const showLoadedImage = () => {
-        pokeImage();
-        if (typeof fullImage.decode === "function") {
-          fullImage.decode().then(pokeImage).catch(pokeImage);
-        }
-      };
-
-      if (fullImage.complete) {
-        showLoadedImage();
-      } else {
-        fullImage.addEventListener("load", showLoadedImage, { once: true });
-        fullImage.addEventListener("error", pokeImage, { once: true });
-      }
-
-      // IntersectionObserver fallback poke in case browser defers render until scroll/interaction
-      if ("IntersectionObserver" in window) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                if (fullImage.complete) pokeImage();
-                observer.unobserve(card);
-              }
-            });
-          },
-          { rootMargin: "200px" },
-        );
-        observer.observe(card);
-      }
-
-      galleryImages.push(fullImage);
+      galleryImages.push(image);
       galleryMedia.push(media);
       galleryButtons.push(button);
       fragment.append(card);
@@ -323,15 +293,31 @@ renderIcons();
     if (previousButton) previousButton.hidden = items.length < 2;
     if (nextButton) nextButton.hidden = items.length < 2;
     renderIcons();
+  }
 
-    // Secondary global poke pass to guarantee paint without user interaction
-    requestAnimationFrame(() => {
-      galleryImages.forEach((img, idx) => {
-        if (img.complete && img.naturalWidth) {
-          img.classList.add("is-image-loaded");
-          const c = img.closest(".project-card");
-          if (c) c.classList.add("is-loaded");
-        }
+  function loadHighResTopDown(items) {
+    // Process items sequentially from top to bottom (index 0 downwards)
+    let chain = Promise.resolve();
+    items.forEach((item, index) => {
+      chain = chain.then(() => {
+        return new Promise((resolve) => {
+          // If high res is same as thumbSrc, no replacement needed
+          if (item.src === (item.thumbSrc || item.src)) {
+            return resolve();
+          }
+          const highResImg = new Image();
+          highResImg.onload = () => {
+            const domImg = galleryImages[index];
+            if (domImg) {
+              domImg.src = item.src;
+            }
+            resolve();
+          };
+          highResImg.onerror = () => {
+            resolve();
+          };
+          highResImg.src = item.src;
+        });
       });
     });
   }
@@ -1212,46 +1198,24 @@ renderIcons();
     .then(async ({ organizeByDimensions, shuffleImages, items }) => {
       const normalized = items.map(normalizeItem);
       let initialList = shuffleImages ? shuffleArray(normalized) : normalized;
-      
-      let sortedItems = initialList;
-      const allHaveDims = initialList.every(
-        (item) => item.width && item.height,
-      );
 
-      if (organizeByDimensions && allHaveDims) {
+      // 1. Preload ALL lightweight thumbnail images first before populating the gallery
+      await Promise.all(initialList.map((item) => preloadThumbnail(item)));
+
+      // 2. Sort/organize items based on dimensions once thumbnails are ready
+      let sortedItems = initialList;
+      if (organizeByDimensions) {
         sortedItems = organizeItemsByDimensions(
           initialList,
           getGridColumnCount(),
         );
       }
 
-      // Initial render with placeholder ratios
+      // 3. Render gallery grid populated with low-res thumbnails immediately
       renderGrid(sortedItems);
 
-      // Asynchronously process photos one by one to ensure fast display & progress on slow connections
-      for (let i = 0; i < sortedItems.length; i++) {
-        await fetchImageDimensionsSingle(sortedItems[i]);
-        // Update DOM element ratio if it was measured dynamically
-        const cardMedia = galleryMedia[i];
-        if (cardMedia && sortedItems[i].width && sortedItems[i].height) {
-          cardMedia.style.aspectRatio = `${sortedItems[i].width} / ${sortedItems[i].height}`;
-        }
-        // Poke loaded card & image immediately as each finishes
-        if (galleryImages[i]) {
-          galleryImages[i].classList.add("is-image-loaded");
-          const card = galleryImages[i].closest(".project-card");
-          if (card) card.classList.add("is-loaded");
-        }
-      }
-
-      // If dimensions were not pre-calculated and organizeByDimensions was requested, re-organize grid once dimensions are known
-      if (organizeByDimensions && !allHaveDims) {
-        const reordered = organizeItemsByDimensions(
-          sortedItems,
-          getGridColumnCount(),
-        );
-        renderGrid(reordered);
-      }
+      // 4. Asynchronously load high-res images top-down (index 0 downwards) and replace thumbnail src
+      loadHighResTopDown(sortedItems);
     })
     .catch(async (error) => {
       console.error("Gallery load error:", error);
