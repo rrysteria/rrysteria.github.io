@@ -3,27 +3,6 @@
   "shuffleImages": true,
   "images": [
     {
-      "src": "headshot/headshot-romilia-1.JPG",
-      "title": "Headshot Romilia 1",
-      "category": "headshot",
-      "width": 1623,
-      "height": 2436
-    },
-    {
-      "src": "headshot/headshot-romilia-2.JPG",
-      "title": "Headshot Romilia 2",
-      "category": "headshot",
-      "width": 1569,
-      "height": 2354
-    },
-    {
-      "src": "headshot/headshot-romilia-3.JPG",
-      "title": "Headshot Romilia 3",
-      "category": "headshot",
-      "width": 1681,
-      "height": 2354
-    },
-    {
       "src": "headshot/headshot-romilia-5.jpg",
       "title": "Headshot Romilia 5",
       "category": "headshot",
